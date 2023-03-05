@@ -1,8 +1,8 @@
-# Idobata Notify - GitHub Action
+# Slack Notify for GitHub Actions
 
-A [GitHub Action](https://github.com/features/actions) to send CI result to a Idobata channel. :bell:
+Siimple [GitHub Actions](https://github.com/features/actions) to send its result to a Slack channel. :bell:
 
-![Idobata Notify examples](https://user-images.githubusercontent.com/155807/135367296-95b223db-0040-4560-8d32-20bff5c97839.png)
+<!--![Idobata Notify examples](https://user-images.githubusercontent.com/155807/135367296-95b223db-0040-4560-8d32-20bff5c97839.png)-->
 
 <br>
 
@@ -12,12 +12,13 @@ A [GitHub Action](https://github.com/features/actions) to send CI result to a Id
 # Single job use
 
   - name: 🔔 Notify results
-    uses: yasslab/idobata_notify
+    uses: yasslab/slack_notify
     if: always()
     with:
-      idobata_hook_url: ${{ secrets.IDOBATA_GITHUB_ACTIONS }}
+      slack_hook_url: ${{ secrets.SLACK_GITHUB_ACTIONS }}
 ```
 
+<!-- TBD feature
 ```
 # Matrix
 
@@ -28,20 +29,23 @@ A [GitHub Action](https://github.com/features/actions) to send CI result to a Id
     steps:
 
       - name: 🔔 Notify results
-        uses: yasslab/idobata_notify
+        uses: yasslab/slack_notify
         with:
-          idobata_hook_url: ${{ secrets.IDOBATA_GITHUB_ACTIONS }}
+          slack_hook_url: ${{ secrets.SLACK_GITHUB_ACTIONS }}
           status: ${{ needs.test.result }} # passing the matrix jobs results
 ```
+-->
+
 
 ## LICENSE
 
-MIT License. https://github.com/yasslab/idobata_notify/blob/main/LICENSE
+- [MIT License](https://github.com/yasslab/slack_notify/blob/main/LICENSE).
+- Revised and inherited from [yasslab/idobata_notify](https://github.com/yasslab/idobata_notify) plugin.
 
 <br>
 
 ## Copyright
 
-Copyright &copy; [YassLab Inc.](https://yasslab.jp) 2012-2021
+Copyright &copy; [YassLab Inc.](https://yasslab.jp) 2023
 
 [![YassLab 株式会社ロゴ](https://yasslab.jp/img/logos/800x200.png?cache=clear)](https://yasslab.jp/)
