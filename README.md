@@ -1,4 +1,4 @@
-# Slack Notify for GitHub Actions
+# (WIP) Slack Notify for GitHub Actions
 
 Simple [GitHub Actions](https://github.com/features/actions) to send its result to a Slack channel. :bell:
 

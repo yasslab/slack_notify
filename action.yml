@@ -1,8 +1,8 @@
-name: 'Idobata Notify'
-description: 'Send actions notification to Idobata'
+name: 'Slack Notify'
+description: 'Send actions result to Slack'
 inputs:
-  idobata_hook_url:  # url of input
-    description: 'Idobata Custom Webhook URL'
+  slack_webhook_url:  # url of input
+    description: 'Slack Incoming WebHook URL'
     required: true
     default: ''
   status:  # Status of previous job
@@ -13,6 +13,7 @@ runs:
   using: "composite"
   steps:
     - name: 👤 Get commit info for notification
+      shell: bash
       run: |
         echo 'COMMIT_ACTOR=${{ github.actor }}' | awk -F '-preview' '{print $1}' >> $GITHUB_ENV
         if [ "${{ inputs.status }}" = "success" ]; then
@@ -28,6 +29,7 @@ runs:
           echo "STATUS_TEXT=Failure"  >> $GITHUB_ENV
           echo "STATUS_VERB=failed"   >> $GITHUB_ENV
         fi
+
         if [ "${{ github.event_name }}" = "pull_request" ]; then
           head_sha=$(echo "${{ github.event.pull_request.head.sha }}" | head -c8)
           echo "COMMIT_SHA=$head_sha"                   >> $GITHUB_ENV
@@ -45,11 +47,10 @@ runs:
           echo "COMMIT_URL=https://github.com/${{github.repository}}/commit/$head_sha" >> $GITHUB_ENV
           echo "COMMIT_LINK=${{ github.repository }}#$head_sha"                        >> $GITHUB_ENV
         fi
-      shell: bash
 
-    - name: 🔔 Notify results to Idobata
+    - name: 🔔 Notify results to Slack
       env:
-        IDOBATA_SECRETS: ${{ inputs.idobata_hook_url }}
+        IDOBATA_SECRETS: ${{ inputs.slack_hook_url }}
       uses: mahaker/actions-idobata@v1.1.2
       with:
         hookUrl: ${{ env.IDOBATA_SECRETS }}
