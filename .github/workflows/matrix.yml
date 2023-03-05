@@ -33,5 +33,5 @@ jobs:
       - name: 🔔 Notify results
         uses: ./
         with:
-          idobata_hook_url: ${{ secrets.IDOBATA_GITHUB_ACTIONS }}
+          slack_hook_url: ${{ secrets.SLACK_GITHUB_ACTIONS }}
           status: ${{ needs.test.result }}

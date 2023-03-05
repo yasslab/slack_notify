@@ -20,4 +20,4 @@ jobs:
         uses: ./
         if: always()
         with:
-          idobata_hook_url: ${{ secrets.IDOBATA_GITHUB_ACTIONS }}
+          slack_hook_url: ${{ secrets.SLACK_GITHUB_ACTIONS }}

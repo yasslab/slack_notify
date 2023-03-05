@@ -1,4 +1,4 @@
-name: 'Slack Notify'
+name: 'GitHub Actions Notify for Slack'
 description: 'Send actions result to Slack'
 inputs:
   slack_webhook_url:  # url of input
@@ -9,6 +9,16 @@ inputs:
     description: 'Get previous job status'
     required: false
     default: ${{ job.status }}
+#inputs:
+#  channel-id:  # channel of input
+#    description: 'Slack Channel ID to post message'
+#    required: true
+#    default: ''
+#  SLACK_BOT_TOKEN:  # channel of input
+#    description: 'Slack token to post message'
+#    required: true
+#    default: ''
+
 runs:
   using: "composite"
   steps:
@@ -48,12 +58,23 @@ runs:
           echo "COMMIT_LINK=${{ github.repository }}#$head_sha"                        >> $GITHUB_ENV
         fi
 
-    - name: 🔔 Notify results to Slack
+    - name: 🔔 Review Request Notify
+      uses: slackapi/slack-github-action@v1.23.0
+      # cf. https://github.com/slackapi/slack-github-action
+      id: slack
       env:
-        IDOBATA_SECRETS: ${{ inputs.slack_hook_url }}
-      uses: mahaker/actions-idobata@v1.1.2
+        SLACK_BOT_TOKEN: ${{ inputs.SLACK_BOT_TOKEN }}
       with:
-        hookUrl: ${{ env.IDOBATA_SECRETS }}
-        format: 'markdown'
-        message: |
-          Your tests ${{ env.STATUS_VERB }} on [${{ env.COMMIT_LINK }}](${{ env.COMMIT_URL }}) ([build](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})) : <span class='label label-${{ env.STATUS_LABEL }}'>${{ env.STATUS_TEXT }}</span><br><img src='https://github.com/${{ env.COMMIT_ACTOR }}.png' class='icon-rounded' width='16' height='16'> [${{ env.COMMIT_ACTOR }}](https://github.com/${{ env.COMMIT_ACTOR }}): ${{ env.COMMIT_MESSAGE }} ([${{ env.COMMIT_SHA }}](https://github.com/${{ github.repository }}/commit/${{ env.COMMIT_SHA }}))
+        channel-id: ${{ inputs.channel-id }}
+        slack-message: |
+          Sending test ... (WIP)
+
+#    - name: 🔔 Notify results to Slack
+#      env:
+#        IDOBATA_SECRETS: ${{ inputs.slack_hook_url }}
+#      uses: mahaker/actions-idobata@v1.1.2
+#      with:
+#        hookUrl: ${{ env.IDOBATA_SECRETS }}
+#        format: 'markdown'
+#        message: |
+#          Your tests ${{ env.STATUS_VERB }} on [${{ env.COMMIT_LINK }}](${{ env.COMMIT_URL }}) ([build](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})) : <span class='label label-${{ env.STATUS_LABEL }}'>${{ env.STATUS_TEXT }}</span><br><img src='https://github.com/${{ env.COMMIT_ACTOR }}.png' class='icon-rounded' width='16' height='16'> [${{ env.COMMIT_ACTOR }}](https://github.com/${{ env.COMMIT_ACTOR }}): ${{ env.COMMIT_MESSAGE }} ([${{ env.COMMIT_SHA }}](https://github.com/${{ github.repository }}/commit/${{ env.COMMIT_SHA }}))
