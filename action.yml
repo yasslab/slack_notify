@@ -1,11 +1,11 @@
 name: 'GitHub Actions Notify for Slack'
-description: 'Send actions result to Slack'
+description: 'Send CI results to Slack'
 inputs:
-  slack_webhook_url:  # url of input
+  SLACK_WEBHOOK_URL: # cf. https://api.slack.com/messaging/webhooks
     description: 'Slack Incoming WebHook URL'
     required: true
     default: ''
-  status:  # Status of previous job
+  STATUS:  # Status of previous job
     description: 'Get previous job status'
     required: false
     default: ${{ job.status }}
@@ -26,14 +26,14 @@ runs:
       shell: bash
       run: |
         echo 'COMMIT_ACTOR=${{ github.actor }}' | awk -F '-preview' '{print $1}' >> $GITHUB_ENV
-        if [ "${{ inputs.status }}" = "success" ]; then
+        if [ "${{ inputs.STATUS }}" = "success" ]; then
           echo "STATUS_LABEL=success" >> $GITHUB_ENV
           echo "STATUS_TEXT=Success"  >> $GITHUB_ENV
           echo "STATUS_VERB=passed"   >> $GITHUB_ENV
-        elif [ "${{ inputs.status }}" = "skipped" ]; then
+        elif [ "${{ inputs.STATUS }}" = "skipped" ]; then
           echo "STATUS_LABEL=default" >> $GITHUB_ENV
-          echo "STATUS_TEXT=Skip"  >> $GITHUB_ENV
-          echo "STATUS_VERB=skipped"   >> $GITHUB_ENV
+          echo "STATUS_TEXT=Skip"     >> $GITHUB_ENV
+          echo "STATUS_VERB=skipped"  >> $GITHUB_ENV
         else
           echo "STATUS_LABEL=danger"  >> $GITHUB_ENV
           echo "STATUS_TEXT=Failure"  >> $GITHUB_ENV
@@ -58,16 +58,16 @@ runs:
           echo "COMMIT_LINK=${{ github.repository }}#$head_sha"                        >> $GITHUB_ENV
         fi
 
-    - name: 🔔 Review Request Notify
-      uses: slackapi/slack-github-action@v1.23.0
+    - name: 🔔 Slack CI Notify
+      uses: slackapi/slack-github-action@v1.24.0
       # cf. https://github.com/slackapi/slack-github-action
       id: slack
       env:
-        SLACK_BOT_TOKEN: ${{ inputs.SLACK_BOT_TOKEN }}
+        SLACK_WEBHOOK_URL: ${{ inputs.SLACK_WEBHOOK_URL }}
       with:
-        channel-id: ${{ inputs.channel-id }}
+        channel-id:        ${{ inputs.channel-id }}
         slack-message: |
-          Sending test ... (WIP)
+          Your tests ${{ env.STATUS_VERB }} on [${{ env.COMMIT_LINK }}](${{ env.COMMIT_URL }}) ([build](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})) : <span class='label label-${{ env.STATUS_LABEL }}'>${{ env.STATUS_TEXT }}</span><br><img src='https://github.com/${{ env.COMMIT_ACTOR }}.png' class='icon-rounded' width='16' height='16'> [${{ env.COMMIT_ACTOR }}](https://github.com/${{ env.COMMIT_ACTOR }}): ${{ env.COMMIT_MESSAGE }} ([${{ env.COMMIT_SHA }}](https://github.com/${{ github.repository }}/commit/${{ env.COMMIT_SHA }}))
 
 #    - name: 🔔 Notify results to Slack
 #      env:
